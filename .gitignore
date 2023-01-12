@@ -8,3 +8,4 @@ models/supervised/*
 models/*.pth.tar
 slurm_err/*
 slurm_out/*
+data/splits_inat19/
