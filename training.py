@@ -178,9 +178,11 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
                 inputs = torch.cat([l_input, u_input], 0)
 
                 ## for self-training
-                logit_s = model(inputs, is_feat=False)
+                # logit_s = model(inputs, is_feat=False)
+                logit_s = model(inputs)
                 with torch.no_grad():
-                    logit_t = model_t(inputs, is_feat=False)
+                    # logit_t = model_t(inputs, is_feat=False)
+                    logit_t = model_t(inputs)
                 ssl_loss = ssl_obj(logit_s, logit_t)
 
                 ## classification loss
@@ -316,8 +318,8 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
                 'iteration': iteration + 1,
                 'best_acc': best_acc,
                 'model': args.model,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict' : optimizer.state_dict(),
+                'state_dict': model.state_dict(),
+                'optimizer' : optimizer.state_dict(),
                 }, is_best, checkpoint_folder=checkpoint_folder)
         
         ## my setting

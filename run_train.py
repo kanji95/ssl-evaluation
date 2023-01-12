@@ -14,13 +14,14 @@ from lib import wrn, transform
 from lib.initialize import initialize_model
 from training import *
 from lib.datasets.iNatDataset import iNatDataset
-
-dset_root = {}
-dset_root['cub'] = 'data/cub/images'
-dset_root['semi_fungi'] = 'data/semi_fungi'
-dset_root['semi_aves'] = 'data/semi_aves'
-dset_root['semi_aves_2'] = 'data/semi_aves_2'
-dset_root['semi_inat'] = 'data/semi_inat'
+from lib.datasets.semi_iNatDataset import iNaturalist
+from lib.transform import train_transforms, val_transforms
+# dset_root = {}
+# dset_root['cub'] = 'data/cub/images'
+# dset_root['semi_fungi'] = 'data/semi_fungi'
+# dset_root['semi_aves'] = 'data/semi_aves'
+# dset_root['semi_aves_2'] = 'data/semi_aves_2'
+# dset_root['semi_inat'] = 'data/semi_inat'
 
 
 class RandomSampler(torch.utils.data.Sampler):
@@ -63,26 +64,32 @@ def main(args):
     logger = initializeLogging(os.path.join(args.exp_prefix, args.exp_dir, 'train_history.txt'), logger_name)
 
     # ==================  Craete data loader ==================================
+    # data_transforms = {
+    #     'train': transforms.Compose([
+    #         transforms.RandomResizedCrop(args.input_size),
+    #         # transforms.ColorJitter(Brightness=0.4, Contrast=0.4, Color=0.4),
+    #         transforms.RandomHorizontalFlip(),
+    #         transforms.ToTensor(),
+    #         transforms.Normalize([0.454, 0.474, 0.367], [0.237, 0.230, 0.249])
+    #         # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    #     ]),
+    #     'test': transforms.Compose([
+    #         transforms.Resize(args.input_size), 
+    #         transforms.CenterCrop(args.input_size),
+    #         transforms.ToTensor(),
+    #         transforms.Normalize([0.454, 0.474, 0.367], [0.237, 0.230, 0.249])
+    #         # transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    #     ])
+    # }
     data_transforms = {
-        'train': transforms.Compose([
-            transforms.RandomResizedCrop(args.input_size),
-            # transforms.ColorJitter(Brightness=0.4, Contrast=0.4, Color=0.4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ]),
-        'test': transforms.Compose([
-            transforms.Resize(args.input_size), 
-            transforms.CenterCrop(args.input_size),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ])
+        'train': train_transforms(args.input_size, "inaturalist19-224", augment=True, normalize=True),
+        'test': val_transforms("inaturalist19-224", normalize=True, resize=args.input_size)
     }
     data_transforms['l_train'] = data_transforms['train']
     data_transforms['u_train'] = data_transforms['train']
     data_transforms['val'] = data_transforms['test']
 
-    root_path = dset_root[args.task]
+    # root_path = dset_root[args.task]
 
     if args.trainval:
         ## use l_train + val for labeled training data
@@ -101,9 +108,16 @@ def main(args):
     else:
         split_fname = [l_train, u_train, 'val', 'test']
 
-    image_datasets = {split: iNatDataset(root_path, split_fname[i], args.task,
-        transform=data_transforms[split]) \
-        for i,split in enumerate(['l_train', 'u_train', 'val', 'test'])}
+    # image_datasets = {split: iNatDataset(root_path, split_fname[i], args.task,
+    #     transform=data_transforms[split]) \
+    #     for i,split in enumerate(['l_train', 'u_train', 'val', 'test'])}
+    class_limit = args.class_limit
+    image_datasets = {
+        'l_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['l_train'], taxonomy="species", class_limit=class_limit),
+        'u_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
+        'val': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
+        'test': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
+    }
 
     print("labeled data : {}, unlabeled data : {}".format(len(image_datasets['l_train']), len(image_datasets['u_train'])))
     print("validation data : {}, test data : {}".format(len(image_datasets['val']), len(image_datasets['test'])))
@@ -111,7 +125,7 @@ def main(args):
     if args.task == 'cifar10' or args.task == 'svhn' or args.task == 'stl10':
         num_classes = 10
     else:
-        num_classes = image_datasets['l_train'].get_num_classes()
+        num_classes = image_datasets['l_train'].num_classes
     
     print("#classes : {}".format(num_classes))
 
@@ -160,6 +174,15 @@ def main(args):
 
     #====================== Initialize optimizer ==============================
     optimizer = optim.SGD(model_ft.parameters(), lr=args.lr, momentum=0.9, weight_decay=args.wd)
+    # optimizer = torch.optim.SGD(
+    #     [
+    #         {'params': model_ft.classifier_3.parameters(), 'lr': 0.1},
+    #         {'params': model_ft.features_1.parameters(), 'lr': 0.1},
+    #         {'params': model_ft.features_2.parameters(), 'lr': 0.01},
+    #     ], 
+    #     momentum=0.9, 
+    #     weight_decay=5e-4
+    # )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=args.num_iter)
 
     #====================== Initialize model ==============================
@@ -203,8 +226,8 @@ def main(args):
             	## Continue training, loading from previous checkpoint
                 start_iter = checkpoint['iteration']
                 best_acc = checkpoint['best_acc']
-                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                model_ft.load_state_dict(checkpoint['model_state_dict'])
+                optimizer.load_state_dict(checkpoint['optimizer'])
+                model_ft.load_state_dict(checkpoint['state_dict'])
 
             print("=> loaded model from '{}'" .format(checkpoint_filename))
                 
@@ -229,21 +252,22 @@ def main(args):
         checkpoint = torch.load(args.path_t)
         print("=> Init teacher model from: '{}".format(args.path_t))
         model_teacher = initialize_model(args.model, num_classes, feature_extract=False, use_pretrained=False, logger=logger)
-        model_teacher.fc = nn.Linear(2048, num_classes)
+        model_teacher = torch.nn.DataParallel(model_teacher)
+        # model_teacher.fc = nn.Linear(2048, num_classes)
         ##
         if args.MoCo:
             ## MoCo model was sasved before model.parallel
-            model_teacher.load_state_dict(checkpoint['model_state_dict'])
+            model_teacher.load_state_dict(checkpoint['state_dict'])
         else:
             if args.init == 'inat':
                 model_teacher = torch.nn.DataParallel(model_teacher)
-            model_teacher.load_state_dict(checkpoint['model_state_dict'])
+            model_teacher.load_state_dict(checkpoint['state_dict'])
 
         # parallelize the model if using multiple gpus
         print('using #GPUs:',torch.cuda.device_count())
-        if torch.cuda.device_count() > 1:
-            model_ft = torch.nn.DataParallel(model_ft)
-            model_teacher = torch.nn.DataParallel(model_teacher)
+        # if torch.cuda.device_count() > 1:
+        #     model_ft = torch.nn.DataParallel(model_ft)
+            # model_teacher = torch.nn.DataParallel(model_teacher)
 
         model_teacher.to(device)
             
@@ -264,8 +288,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', default='semi_aves', type=str, 
             help='the name of the dataset')
-    parser.add_argument('--model', default='resnet50', type=str,
-            help='resnet50|resnet101|wrn')
+    parser.add_argument('--model', default='resnet18', type=str,
+            help='resnet18|resnet50|resnet101|wrn')
     parser.add_argument('--batch_size', default=32, type=int,
             help='size of mini-batch')
     parser.add_argument('--num_iter', default=200, type=int,
@@ -308,6 +332,8 @@ if __name__ == '__main__':
     parser.add_argument("--consis_coef", default=1.0, type=float)
     ## PL
     parser.add_argument("--threshold", default=0.95, type=float)
+    
+    parser.add_argument("--class_limit", default=100, type=int)
     # ## MM
     # parser.add_argument("--T", default=0.5, type=float)
     # parser.add_argument("--K", default=2, type=int)
@@ -347,19 +373,22 @@ if __name__ == '__main__':
         args.MoCo = False
 
     if args.init == 'inat':
-        args.load_dir = 'models/inat_resnet50.pth.tar'
+        args.load_dir = 'models/inat_resnet18.pth.tar'
 
     if args.alg == 'distill':
         if args.MoCo:
             ## Using MoCo + self-training
-            args.path_t = 'models/MoCo_supervised/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
-            args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+            if args.path_t == "":
+                args.path_t = 'models/MoCo_supervised/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+            if args.load_dir == "":
+                args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
         else:
             ## Using self-training
             args.path_t = 'models/supervised/' + args.task + '_' + args.init + '.pth.tar'
     elif args.MoCo:
         ## Using MoCo + supervised training
-        args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+        if args.load_dir == "":
+            args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
 
 
     main(args)

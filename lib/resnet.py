@@ -373,3 +373,33 @@ def wide_resnet101_2(pretrained=False, progress=True, **kwargs):
     kwargs['width_per_group'] = 64 * 2
     return _resnet('wide_resnet101_2', Bottleneck, [3, 4, 23, 3],
                    pretrained, progress, **kwargs)
+    
+    
+class ResNet18(nn.Module):
+    """Used for Cross-entropy, CRM, Making-better-mistakes."""
+
+    def __init__(self, model, feature_size, num_classes):
+        super(ResNet18, self).__init__()
+
+        self.features_2 = nn.Sequential(*list(model.children())[:-2])
+        self.max = nn.MaxPool2d(kernel_size=7, stride=7)
+        self.num_ftrs = 512 * 1 * 1  # Used for resnet18
+        # self.num_ftrs = 2048 * 1 * 1                  # Used for resnet50
+        self.features_1 = nn.Sequential(
+            nn.BatchNorm1d(self.num_ftrs),
+            nn.Linear(self.num_ftrs, feature_size),
+            nn.BatchNorm1d(feature_size),
+            nn.ELU(inplace=True),
+        )
+        self.classifier_3 = nn.Sequential(
+            nn.Linear(feature_size, num_classes), )
+
+    def forward(self, x, target="ignored"):
+        x = self.features_2(x)
+        x = self.max(x)
+        x = x.view(x.size(0), -1)
+        x = self.features_1(x)  # N * 512
+        #x = F.normalize(x, p=2, dim=1)
+        species_input = x
+        species_out = self.classifier_3(species_input)
+        return species_out

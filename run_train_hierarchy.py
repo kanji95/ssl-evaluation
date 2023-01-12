@@ -20,7 +20,7 @@ dset_root['cub'] = 'data/cub/images'
 dset_root['semi_fungi'] = 'data/semi_fungi'
 dset_root['semi_aves'] = 'data/semi_aves'
 dset_root['semi_aves_2'] = 'data/semi_aves_2'
-dset_root['semi_inat'] = 'data/semi_inat'
+dset_root['semi_inat'] = '/media/newhd/semi-inat-2021/'
 
 
 class RandomSampler(torch.utils.data.Sampler):

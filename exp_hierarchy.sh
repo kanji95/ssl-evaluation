@@ -56,7 +56,10 @@ for level in genus kingdom phylum class order family species; do
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
       export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level
-      sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
+                                    --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} 
 
     done
   done
@@ -114,7 +117,10 @@ for level in phylum; do
       err_path=slurm_err_bmvc/${exp_dir}
 
       export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level
-      sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
+                                    --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} 
 
     done
   done
@@ -160,7 +166,10 @@ for level in phylum; do
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
       export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level
-      sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
+                                    --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level}
 
     done
   done
@@ -210,7 +219,10 @@ for level in phylum; do
       err_path=slurm_err_bmvc/${exp_dir}
 
       export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level
-      sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
+                                    --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level}
 
     done
   done
@@ -260,7 +272,10 @@ for level in phylum; do
       err_path=slurm_err_bmvc/${exp_dir}
 
       export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level
-      sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
+      CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
+                                    --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} 
 
     done
   done

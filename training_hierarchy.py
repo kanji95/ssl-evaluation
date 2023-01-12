@@ -90,24 +90,24 @@ def forward_hierarchy(outputs, l_targets, u_outputs, u_targets, args, model, cri
 
     _outputs =  F.softmax(outputs, dim=1)
 
-    outputs_g = torch.matmul(_outputs, model.W_s2g)
-    outputs_f = torch.matmul(outputs_g, model.W_g2f)
-    outputs_o = torch.matmul(outputs_f, model.W_f2o)
-    outputs_c = torch.matmul(outputs_o, model.W_o2c)
-    outputs_p = torch.matmul(outputs_c, model.W_c2p)
-    outputs_k = torch.matmul(outputs_p, model.W_p2k)
+    outputs_g = torch.matmul(_outputs, model.module.W_s2g)
+    outputs_f = torch.matmul(outputs_g, model.module.W_g2f)
+    outputs_o = torch.matmul(outputs_f, model.module.W_f2o)
+    outputs_c = torch.matmul(outputs_o, model.module.W_o2c)
+    outputs_p = torch.matmul(outputs_c, model.module.W_c2p)
+    outputs_k = torch.matmul(outputs_p, model.module.W_p2k)
 
     correct_1_p = compute_correct(outputs_p, l_targets[5], topk=(1,))
     correct_1_k = compute_correct(outputs_k, l_targets[6], topk=(1,))
     
     _u_outputs =  F.softmax(u_outputs, dim=1)
 
-    u_outputs_g = torch.matmul(_u_outputs, model.W_s2g)
-    u_outputs_f = torch.matmul(u_outputs_g, model.W_g2f)
-    u_outputs_o = torch.matmul(u_outputs_f, model.W_f2o)
-    u_outputs_c = torch.matmul(u_outputs_o, model.W_o2c)
-    u_outputs_p = torch.matmul(u_outputs_c, model.W_c2p)
-    u_outputs_k = torch.matmul(u_outputs_p, model.W_p2k)
+    u_outputs_g = torch.matmul(_u_outputs, model.module.W_s2g)
+    u_outputs_f = torch.matmul(u_outputs_g, model.module.W_g2f)
+    u_outputs_o = torch.matmul(u_outputs_f, model.module.W_f2o)
+    u_outputs_c = torch.matmul(u_outputs_o, model.module.W_o2c)
+    u_outputs_p = torch.matmul(u_outputs_c, model.module.W_c2p)
+    u_outputs_k = torch.matmul(u_outputs_p, model.module.W_p2k)
 
     u_correct_1_p = compute_correct(u_outputs_p, u_targets[5], topk=(1,))
     u_correct_1_k = compute_correct(u_outputs_k, u_targets[6], topk=(1,))
@@ -301,10 +301,10 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
             elif args.alg == "hierarchy":
                 ## Supervised + hierarchical supervision
                 l_feature = model(l_input)
-                l_outputs = model.fc(l_feature)
+                l_outputs = model.module.fc(l_feature)
 
                 u_feature = model(u_input)
-                u_outputs = model.fc(u_feature)
+                u_outputs = model.module.fc(u_feature)
 
                 loss, correct_1, correct_1_p, correct_1_k, u_correct_1_p, u_correct_1_k = forward_hierarchy(l_outputs, l_targets, u_outputs, u_targets, args, model)
 
@@ -407,29 +407,37 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
                 with torch.set_grad_enabled(False):
 
                     feature = model(inputs)
-                    outputs = model.fc(feature)
+                    outputs = model.module.fc(feature)
                     loss = criterion(outputs, target)
                     correct_1 = compute_correct(outputs, target, topk=(1, ))
+                    
+                    val_loss += loss.item()
 
                     _outputs =  F.softmax(outputs, dim=1)
 
-                    outputs_g = torch.matmul(_outputs, model.W_s2g)
+                    outputs_g = torch.matmul(_outputs, model.module.W_s2g)
                     loss_g = NLLoss(torch.log(outputs_g + 1e-20) , l_target_g)
+                    val_loss += loss_g.item()
 
-                    outputs_f = torch.matmul(outputs_g, model.W_g2f)
+                    outputs_f = torch.matmul(outputs_g, model.module.W_g2f)
                     loss_f = NLLoss(torch.log(outputs_f + 1e-20) , l_target_f)
+                    val_loss += loss_f.item()
 
-                    outputs_o = torch.matmul(outputs_f, model.W_f2o)
+                    outputs_o = torch.matmul(outputs_f, model.module.W_f2o)
                     loss_o = NLLoss(torch.log(outputs_o + 1e-20) , l_target_o)
+                    val_loss += loss_o.item()
 
-                    outputs_c = torch.matmul(outputs_o, model.W_o2c)
+                    outputs_c = torch.matmul(outputs_o, model.module.W_o2c)
                     loss_c = NLLoss(torch.log(outputs_c + 1e-20) , l_target_c)
+                    val_loss += loss_c.item()
 
-                    outputs_p = torch.matmul(outputs_c, model.W_c2p)
+                    outputs_p = torch.matmul(outputs_c, model.module.W_c2p)
                     loss_p = NLLoss(torch.log(outputs_p + 1e-20) , l_target_p)
+                    val_loss += loss_p.item()
 
-                    outputs_k = torch.matmul(outputs_p, model.W_p2k)
+                    outputs_k = torch.matmul(outputs_p, model.module.W_p2k)
                     loss_k = NLLoss(torch.log(outputs_k + 1e-20) , l_target_k)
+                    val_loss += loss_k.item()
 
                     correct_1_p = compute_correct(outputs_p, l_target_p, topk=(1,))
                     correct_1_k = compute_correct(outputs_k, l_target_k, topk=(1,))
