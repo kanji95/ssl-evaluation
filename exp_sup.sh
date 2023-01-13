@@ -1,6 +1,6 @@
 alg=supervised
-batch_size=32
-level=species
+batch_size=256
+level=genus
 ## unused args
 kd_T=1.0
 alpha=1.0
@@ -37,7 +37,8 @@ for task in semi_inat; do
       wd=1e-4
     fi
 
-    exp_dir=${task}_Supervised_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+    # exp_dir=${task}_Supervised_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+    exp_dir=${task}_Supervised_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
     echo "${exp_dir}"
     out_path=slurm_out_0504/${exp_dir}
     err_path=slurm_err_0504/${exp_dir}
