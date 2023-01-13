@@ -113,7 +113,7 @@ def main(args):
     #     for i,split in enumerate(['l_train', 'u_train', 'val', 'test'])}
     class_limit = args.class_limit
     image_datasets = {
-        'l_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['l_train'], taxonomy="species", class_limit=class_limit),
+        'l_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
         'u_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
         'val': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
         'test': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
@@ -334,6 +334,10 @@ if __name__ == '__main__':
     parser.add_argument("--threshold", default=0.95, type=float)
     
     parser.add_argument("--class_limit", default=100, type=int)
+    
+    parser.add_argument('--level', default='species', type=str, 
+            choices=['kingdom','phylum','class','order','family','genus','species'], 
+            help='what level to use for supervision')
     # ## MM
     # parser.add_argument("--T", default=0.5, type=float)
     # parser.add_argument("--K", default=2, type=int)

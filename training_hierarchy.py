@@ -169,7 +169,7 @@ def test(model, dataloaders, args, logger, name="Best", criterion=nn.CrossEntrop
         with torch.set_grad_enabled(False):
 
             feature = model(inputs)
-            outputs = model.fc(feature)
+            outputs = model.module.fc(feature)
             loss = criterion(outputs, target)
             correct_1 = compute_correct(outputs, target, topk=(1, ))
 
