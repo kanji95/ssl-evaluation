@@ -134,10 +134,15 @@ class iNaturalist(data.Dataset):
         self._taxonomy['species'] = self._taxonomy['id']
         
         self.reverse_mapping_index = defaultdict(list)
+        self.W_spec_gen = np.zeros((TAXONOMY_NUM["species"], TAXONOMY_NUM["genus"]))
 
         for child_key in self._taxonomy['genus']:
             parent_key = self._taxonomy['genus'][child_key]
             self.reverse_mapping_index[parent_key].append(child_key)
+            self.W_spec_gen[child_key, parent_key] = 1.
+            
+        if not os.path.exists('data/semi_inat/taxa_weights_2019'):
+            np.save('data/semi_inat/taxa_weights_2019', self.W_spec_gen)
         
         self.classes = sorted(list(set(self._classes)))
         self.classes = [f'nat{x:04}' for x in self.classes]
@@ -165,7 +170,7 @@ class iNaturalist(data.Dataset):
                 image_names = image_names[:class_limit]
             
             species_id = self.class_to_idx[class_name]
-            tax_id = self._taxonomy[self.taxonomy_name][species_id]
+            # tax_id = self._taxonomy[self.taxonomy_name][species_id]
             kingdom_id = self._taxonomy["kingdom"][species_id]
             phylum_id = self._taxonomy["phylum"][species_id]
             class_id = self._taxonomy["class"][species_id]
@@ -173,7 +178,7 @@ class iNaturalist(data.Dataset):
             family_id = self._taxonomy["family"][species_id]
             genus_id = self._taxonomy["genus"][species_id]
             
-            class_samples = [(os.path.join(self.inaturalist_dir, class_name, image_name), tax_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id) for image_name in image_names]
+            class_samples = [(os.path.join(self.inaturalist_dir, class_name, image_name), species_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id) for image_name in image_names]
             self.samples.extend(class_samples)
         
         # image loading, preprocessing and augmentations
@@ -187,7 +192,7 @@ class iNaturalist(data.Dataset):
     
     def __getitem__(self, index):
         
-        img_path, tax_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id = self.samples[index]
+        img_path, species_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id = self.samples[index]
         img = Image.open(img_path).convert("RGB")
 
         if self.transform:
@@ -196,7 +201,7 @@ class iNaturalist(data.Dataset):
         # target = torch.zeros(self.num_classes)
         # target[tax_id] = 1
 
-        return img, tax_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id
+        return img, species_id, kingdom_id, phylum_id, class_id, order_id, family_id, genus_id
     
     def __str__(self):
         details = f"len={len(self)}, mode={self._mode}, root={self._root}"

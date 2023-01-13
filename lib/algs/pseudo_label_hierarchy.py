@@ -19,7 +19,7 @@ class PL_hierarchy(nn.Module):
         
         # output = model(x)        
         feature = model(x)
-        output = model.fc(feature)
+        output = model.module.fc(feature)
 
         loss = (-(p_target.detach() * F.log_softmax(output, 1)).sum(1)*mask).mean()
         # model.update_batch_stats(True)

@@ -4,7 +4,7 @@ import torch.optim as optim
 import numpy as np
 import torchvision
 from torchvision import datasets, models, transforms
-from lib.resnet_hierarchy import resnet50, resnet101
+from lib.resnet_hierarchy import resnet18, resnet50, resnet101, ResNet18
 
 def set_parameter_requires_grad(model, feature_extract):
     if feature_extract:
@@ -23,6 +23,32 @@ def initialize_model(model_name, num_classes, feature_extract=False,
         set_parameter_requires_grad(model_ft, feature_extract)
         num_ftrs = model_ft.fc.in_features
         model_ft.fc = nn.Linear(num_ftrs, num_classes)
+        
+    elif model_name == "resnet18":
+        """ Resnet18
+        """
+        # model_ft = models.resnet50(pretrained=use_pretrained)
+        model_ft = resnet18(pretrained=use_pretrained)
+        set_parameter_requires_grad(model_ft, feature_extract)
+        num_ftrs = model_ft.fc.in_features
+        model_ft.fc = nn.Linear(num_ftrs, num_classes)
+        
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        
+        W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
+        model_ft.W_s2g = torch.tensor(W_s2g, requires_grad=False)
+        model_ft.W_s2g = model_ft.W_s2g.float().to(device)
+        
+    elif model_name == "custom_resnet18":
+        model = models.resnet18(pretrained=True)
+        model_ft = ResNet18(model, feature_size=600, num_classes=num_classes)
+        model_ft.fc = nn.Linear(600, num_classes)
+        
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        
+        W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
+        model_ft.W_s2g = torch.tensor(W_s2g, requires_grad=False)
+        model_ft.W_s2g = model_ft.W_s2g.float().to(device)
 
     elif model_name == "resnet50":
         """ Resnet50
@@ -53,6 +79,5 @@ def initialize_model(model_name, num_classes, feature_extract=False,
         model_ft.W_o2c = model_ft.W_o2c.float().to(device)
         model_ft.W_c2p = model_ft.W_c2p.float().to(device)
         model_ft.W_p2k = model_ft.W_p2k.float().to(device)
-
 
     return model_ft

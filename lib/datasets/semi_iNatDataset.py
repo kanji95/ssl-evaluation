@@ -134,10 +134,12 @@ class iNaturalist(data.Dataset):
         self._taxonomy['species'] = self._taxonomy['id']
         
         self.reverse_mapping_index = defaultdict(list)
+        self.W_spec_gen = torch.zeros((TAXONOMY_NUM["species"], TAXONOMY_NUM["genus"]))
 
         for child_key in self._taxonomy['genus']:
             parent_key = self._taxonomy['genus'][child_key]
             self.reverse_mapping_index[parent_key].append(child_key)
+            self.W_spec_gen[child_key, parent_key] = 1.
         
         self.classes = sorted(list(set(self._classes)))
         self.classes = [f'nat{x:04}' for x in self.classes]
@@ -166,6 +168,13 @@ class iNaturalist(data.Dataset):
             
             species_id = self.class_to_idx[class_name]
             tax_id = self._taxonomy[self.taxonomy_name][species_id]
+            # genus_id = self._taxonomy['genus'][species_id]
+            # family_id = self._taxonomy['family'][species_id]
+            # order_id = self._taxonomy['order'][species_id]
+            # class_id = self._taxonomy['class'][species_id]
+            # phylum_id = self._taxonomy['phylum'][species_id]
+            # kingdom_id = self._taxonomy['kingdom'][species_id]
+            
             
             class_samples = [(os.path.join(self.inaturalist_dir, class_name, image_name), tax_id) for image_name in image_names]
             self.samples.extend(class_samples)

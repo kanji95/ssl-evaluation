@@ -157,11 +157,11 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
         model.train()
         
         l_input, target = l_data
-        u_input, dummy_target = u_data
+        u_input, u_target = u_data
 
         l_input = l_input.to(device).float()
         u_input = u_input.to(device).float()
-        dummy_target = dummy_target.to(device).long()
+        u_target = u_target.to(device).long()
         target = target.to(device).long()
 
         ## upsample
