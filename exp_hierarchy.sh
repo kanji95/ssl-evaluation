@@ -4,13 +4,14 @@ level=species
 # only used for distillation
 kd_T=1.0
 alpha=1.0
+data_root=/ssd_scratch/cvit/kanishk/inaturalist_2019/
 # only used for PL
 warmup=1
-climit=100
+climit=50
 
 ## Choose the algorithm
-alg=sup_hie
-# alg=PL_hie
+# alg=sup_hie
+alg=PL_hie
 # alg=MoCo_hie
 # alg=ST_hie
 # alg=MoCoST_hie
@@ -58,11 +59,11 @@ for level in species; do
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
-      export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
+      # export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit data_root
       # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
       CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                                     --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit}
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit} --data_root ${data_root}
 
     done
   done
@@ -119,11 +120,11 @@ for level in species; do
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
 
-      export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
+      # export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
       # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
       CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                                     --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit}
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit} --data_root ${data_root}
 
     done
   done
@@ -168,11 +169,11 @@ for level in species; do
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
-      export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
+      # export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
       # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
       CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                                     --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit}
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit} --data_root ${data_root}
 
     done
   done
@@ -221,11 +222,11 @@ for level in species; do
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
 
-      export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
+      # export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
       # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
       CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                                     --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit}
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit} --data_root ${data_root}
 
     done
   done
@@ -274,11 +275,11 @@ for level in phylum; do
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
 
-      export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
+      # export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup level climit
       # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_hierarchy.sbatch
       CUDA_VISIBLE_DEVICES=0,1,2 python run_train_hierarchy.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                                     --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit}
+                                    --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --level ${level} --class_limit ${climit} --data_root ${data_root}
 
     done
   done
