@@ -175,7 +175,7 @@ def test(model, dataloaders, args, logger, name="Best", criterion=nn.CrossEntrop
 
             _outputs =  F.softmax(outputs, dim=1)
 
-            outputs_g = torch.matmul(_outputs, model.W_s2g)
+            outputs_g = torch.matmul(_outputs, model.module.W_s2g)
             loss_g = NLLoss(torch.log(outputs_g + 1e-20) , l_target_g)
 
             # outputs_f = torch.matmul(outputs_g, model.W_g2f)

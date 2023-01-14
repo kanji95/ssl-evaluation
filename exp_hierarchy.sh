@@ -6,12 +6,12 @@ kd_T=1.0
 alpha=1.0
 # only used for PL
 warmup=1
-climit=100
+climit=10
 
 ## Choose the algorithm
-# alg=sup_hie
+alg=sup_hie
 # alg=PL_hie
-alg=MoCo_hie
+# alg=MoCo_hie
 # alg=ST_hie
 # alg=MoCoST_hie
 # alg=transfer
@@ -54,7 +54,7 @@ for level in species; do
       fi
 
       ## only species loss for labeled data
-      exp_dir=${task}_sem_sup_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -189,8 +189,8 @@ kd_T=1.0
 alpha=0.7
 warmup=1
 unlabel=inout
-for level in phylum; do
-  for unlabel in in inout; do
+for level in species; do
+  for unlabel in in; do
     for init in imagenet inat; do
 
       if [ ${init} == scratch ]

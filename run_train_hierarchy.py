@@ -356,7 +356,7 @@ if __name__ == '__main__':
             help='Use MoCo pre-trained model for supervised or self-training')
 
     ### Self-training ###
-    parser.add_argument('--path_t', default='', type=str, 
+    parser.add_argument('--path_t', default='results/semi_inat_sem_sup_hie_climit_100_species_imagenet_in_3e-3_1e-4_50000/checkpoints/checkpoint.pth.tar', type=str, 
             help='use iNat/MoCo pretrained model')
     parser.add_argument("--kd_T", default=1.0, type=float, 
             help='temperature for distillation')
@@ -380,14 +380,18 @@ if __name__ == '__main__':
     if args.alg == 'distill' or args.alg == 'distill_hierarchy':
         if args.MoCo:
             ## Using MoCo + self-training
-            args.path_t = 'models/MoCo_supervised/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
-            args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+            if args.path_t == "":
+                args.path_t = 'models/MoCo_supervised/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+            if args.load_dir == "":
+                args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
         else:
             ## Using self-training
-            args.path_t = 'models/supervised/' + args.task + '_' + args.init + '.pth.tar'
+            if args.path_t == "":
+                args.path_t = 'models/supervised/' + args.task + '_' + args.init + '.pth.tar'
     elif args.MoCo:
         ## Using MoCo + supervised training
-        args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
+        if args.load_dir == "":
+            args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
 
 
     main(args)
