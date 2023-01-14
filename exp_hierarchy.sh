@@ -6,7 +6,7 @@ kd_T=1.0
 alpha=1.0
 # only used for PL
 warmup=1
-climit=10
+climit=100
 
 ## Choose the algorithm
 alg=sup_hie
