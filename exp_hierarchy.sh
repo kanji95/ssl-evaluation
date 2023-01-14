@@ -1,5 +1,5 @@
 task=semi_inat
-batch_size=256
+batch_size=32
 level=species
 # only used for distillation
 kd_T=1.0
