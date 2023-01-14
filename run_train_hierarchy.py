@@ -284,6 +284,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', default='semi_aves', type=str, 
             help='the name of the dataset')
+    parser.add_argument('--data_root', default='/ssd_scratch/cvit/kanishk/inaturalist_2019', type=str, 
+            help='path of the dataset')
     parser.add_argument('--model', default='custom_resnet18', type=str,
             help='resnet50|resnet101|wrn')
     parser.add_argument('--batch_size', default=32, type=int,
