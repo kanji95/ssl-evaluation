@@ -1,5 +1,5 @@
 alg=supervised
-batch_size=256
+batch_size=64
 level=species
 ## unused args
 kd_T=1.0
