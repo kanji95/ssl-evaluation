@@ -4,10 +4,11 @@ level=species
 # only used for distillation
 kd_T=1.0
 alpha=1.0
-data_root=/ssd_scratch/cvit/kanishk/inaturalist_2019/
+# data_root=/ssd_scratch/cvit/kanishk/inaturalist_2019/
+data_root=/media/newhd/inaturalist_2019/
 # only used for PL
 warmup=1
-climit=50
+climit=10
 
 ## Choose the algorithm
 # alg=sup_hie
