@@ -5,7 +5,7 @@ level=species
 kd_T=1.0
 alpha=1.0
 warmup=1
-climit=100
+climit=25
 
 ## Supervised baseline 
 MoCo=false
@@ -38,6 +38,7 @@ for task in semi_inat; do
     fi
 
     exp_dir=${task}_Supervised_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+    # exp_dir=${task}_Supervised_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
     echo "${exp_dir}"
     out_path=slurm_out_0504/${exp_dir}
     err_path=slurm_err_0504/${exp_dir}

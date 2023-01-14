@@ -113,10 +113,10 @@ def main(args):
     #     for i,split in enumerate(['l_train', 'u_train', 'val', 'test'])}
     class_limit = args.class_limit
     image_datasets = {
-        'l_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
-        'u_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
-        'val': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
-        'test': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
+        'l_train': iNaturalist(args.data_root, "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
+        'u_train': iNaturalist(args.data_root, "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
+        'val': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
+        'test': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
     }
 
     print("labeled data : {}, unlabeled data : {}".format(len(image_datasets['l_train']), len(image_datasets['u_train'])))
@@ -288,7 +288,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', default='semi_aves', type=str, 
             help='the name of the dataset')
-    parser.add_argument('--model', default='resnet18', type=str,
+    parser.add_argument('--data_root', default='/ssd_scratch/cvit/kanishk/inaturalist_2019', type=str, 
+            help='path of the dataset')
+    parser.add_argument('--model', default='custom_resnet18', type=str,
             help='resnet18|resnet50|resnet101|wrn')
     parser.add_argument('--batch_size', default=32, type=int,
             help='size of mini-batch')
