@@ -113,10 +113,10 @@ def main(args):
     
     class_limit = args.class_limit
     image_datasets = {
-        'l_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['l_train'], taxonomy="species", class_limit=class_limit),
-        'u_train': iNaturalist("/media/newhd/inaturalist_2019", "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
-        'val': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
-        'test': iNaturalist("/media/newhd/inaturalist_2019", "val", transform=data_transforms['val'], taxonomy="species", class_limit=class_limit),
+        'l_train': iNaturalist(args.data_root, "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
+        'u_train': iNaturalist(args.data_root, "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
+        'val': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
+        'test': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
     }
 
     print("labeled data : {}, unlabeled data : {}".format(len(image_datasets['l_train']), len(image_datasets['u_train'])))
