@@ -8,12 +8,12 @@ alpha=1.0
 data_root=/media/newhd/inaturalist_2019/
 # only used for PL
 warmup=1
-climit=10
+climit=50
 
 ## Choose the algorithm
 # alg=sup_hie
-alg=PL_hie
-# alg=MoCo_hie
+# alg=PL_hie
+alg=MoCo_hie
 # alg=ST_hie
 # alg=MoCoST_hie
 # alg=transfer
