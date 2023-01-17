@@ -169,7 +169,10 @@ def test(model, dataloaders, args, logger, name="Best", criterion=nn.CrossEntrop
         with torch.set_grad_enabled(False):
 
             feature = model(inputs)
-            outputs = model.module.fc(feature)
+            try:
+                outputs = model.module.fc(feature)
+            except:
+                outputs = feature
             loss = criterion(outputs, target)
             correct_1 = compute_correct(outputs, target, topk=(1, ))
 
@@ -306,7 +309,10 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
                     if args.init == 'inat' and args.MoCo is False :
                         logit_t = model_t.module.fc(feature_t)
                     else:
-                        logit_t = model_t.module.fc(feature_t)
+                        try:
+                            logit_t = model_t.module.fc(feature_t)
+                        except:
+                            logit_t = feature_t
                 ssl_loss = ssl_obj(logit_s, logit_t)
 
                 loss = (1.0 - args.alpha) * cls_loss + args.alpha * ssl_loss
@@ -392,7 +398,7 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
         ####################
         #### Validation ####
         ####################
-        if ((iteration+1) % args.val_freq) == 0 or (iteration+1) == args.num_iter:
+        if ((iteration+1) % args.val_freq) == 0 or (iteration+1) == args.num_iter or (iteration > 48000 and iteration % 200 == 0):
 
             ## Print val loss/acc ##
             model.eval()
