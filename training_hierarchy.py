@@ -398,7 +398,7 @@ def train_model(args, model, model_t, dataloaders, criterion, optimizer,
         ####################
         #### Validation ####
         ####################
-        if ((iteration+1) % args.val_freq) == 0 or (iteration+1) == args.num_iter or ((iteration + 1) >= 48000 and (iteration + 1) % 200 == 0):
+        if ((iteration+1) % args.val_freq) == 0 or (iteration+1) == args.num_iter or ((iteration + 1) >= (args.num_iter - (args.num_iter//10)) and (iteration + 1) % (args.num_iter//100) == 0):
 
             ## Print val loss/acc ##
             model.eval()

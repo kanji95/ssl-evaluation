@@ -195,6 +195,8 @@ class iNaturalist(data.Dataset):
 
         if self.transform:
             img = self.transform(img)
+            noise = torch.rand_like(img) * 0.15
+            img = img + noise
 
         # target = torch.zeros(self.num_classes)
         # target[tax_id] = 1

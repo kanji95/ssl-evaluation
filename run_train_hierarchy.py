@@ -201,7 +201,8 @@ def main(args):
             if args.load_dir != '':
                 ## Load MoCo or iNat pre-trained models
                 if args.MoCo:
-                    state_dict = checkpoint['model']
+                    # state_dict = checkpoint['model']
+                    state_dict = checkpoint['state_dict']
                     encoder_state_dict = OrderedDict()
                     for k, v in state_dict.items():
                         k = k.replace('module.', '')

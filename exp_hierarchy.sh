@@ -43,7 +43,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
+        num_iter=100000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -56,7 +56,7 @@ for level in species; do
       fi
 
       ## only species loss for labeled data
-      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -98,8 +98,8 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
-        warmup=5000
+        num_iter=100000
+        warmup=10000
         # lr=1e-3
         lr=3e-3
         wd=1e-4
@@ -116,7 +116,7 @@ for level in species; do
         threshold=0.95
       fi
 
-      exp_dir=${task}_PL_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_PL_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -138,6 +138,7 @@ elif [ ${alg} == MoCo_hie ]
 then
 alg=hierarchy
 MoCo=true
+# load_dir=/home/kanishk/ssl-evaluation/results/semi_inat_Supervised_climit_100_species_imagenet_in_3e-3_1e-4_50000/checkpoints/checkpoint.pth.tar
 # unlabel=inout
 for level in species; do
   for unlabel in in; do
@@ -154,8 +155,8 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
-        lr=1e-2
+        num_iter=100000
+        lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
       then
@@ -166,7 +167,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_MoCo_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_MoCo_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -208,7 +209,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
+        num_iter=100000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -220,7 +221,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_ST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_ST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -262,7 +263,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
+        num_iter=100000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -274,7 +275,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_MoCoST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_MoCoST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
