@@ -312,9 +312,9 @@ if __name__ == '__main__':
             help="coefficient of entropy minimization. If you try VAT + EM, set 0.06")
     parser.add_argument('--num_workers', default=12, type=int)
     parser.add_argument("--root", "-r", default="data", type=str, help="dataset dir for cifar and svhn")
-    parser.add_argument('--val_freq', default=200, type=int,
+    parser.add_argument('--val_freq', default=5000, type=int,
             help='do val every x iter')
-    parser.add_argument('--print_freq', default=100, type=int,
+    parser.add_argument('--print_freq', default=1000, type=int,
             help='show train loss/acc every x iter')
     parser.add_argument("--wd", default=1e-4, type=float, 
             help="weight decay")

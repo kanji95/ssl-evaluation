@@ -249,30 +249,39 @@ def main(args):
     if args.alg == 'distill' or args.alg == 'distill_hierarchy':
         checkpoint = torch.load(args.path_t)
         print("=> Init teacher model from: '{}".format(args.path_t))
+        
         try:
             model_teacher = initialize_model(args.model, num_classes, feature_extract=False, use_pretrained=False, logger=logger)
+            model_teacher = torch.nn.DataParallel(model_teacher)
+            ##
+            if args.MoCo:
+                ## MoCo model was sasved before model.parallel
+                model_teacher.load_state_dict(checkpoint['model_state_dict'])
+            else:
+                if args.init == 'inat':
+                    model_teacher = torch.nn.DataParallel(model_teacher)
+                # model_teacher.load_state_dict(checkpoint['model_state_dict'])
+                model_teacher.load_state_dict(checkpoint['state_dict'])
+                
+                W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
+                model_teacher.module.W_s2g = torch.tensor(W_s2g, requires_grad=False)
+                model_teacher.module.W_s2g = model_teacher.module.W_s2g.float().to(device)
         except:
             model_teacher = linit.initialize_model(args.model, num_classes, feature_extract=False, use_pretrained=False, logger=logger)
-             
-            W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
-            model_teacher.W_s2g = torch.tensor(W_s2g, requires_grad=False)
-            model_teacher.W_s2g = model_teacher.W_s2g.float().to(device)
+            model_teacher = torch.nn.DataParallel(model_teacher)
             
-        # model_teacher.fc = nn.Linear(2048, num_classes)
-        model_teacher = torch.nn.DataParallel(model_teacher)
-        ##
-        if args.MoCo:
-            ## MoCo model was sasved before model.parallel
-            model_teacher.load_state_dict(checkpoint['model_state_dict'])
-        else:
-            if args.init == 'inat':
-                model_teacher = torch.nn.DataParallel(model_teacher)
-            # model_teacher.load_state_dict(checkpoint['model_state_dict'])
-            model_teacher.load_state_dict(checkpoint['state_dict'])
-            
-            W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
-            model_teacher.module.W_s2g = torch.tensor(W_s2g, requires_grad=False)
-            model_teacher.module.W_s2g = model_teacher.module.W_s2g.float().to(device)
+            if args.MoCo:
+                ## MoCo model was sasved before model.parallel
+                model_teacher.load_state_dict(checkpoint['model_state_dict'])
+            else:
+                if args.init == 'inat':
+                    model_teacher = torch.nn.DataParallel(model_teacher)
+                # model_teacher.load_state_dict(checkpoint['model_state_dict'])
+                model_teacher.load_state_dict(checkpoint['state_dict'])
+                
+                W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
+                model_teacher.module.W_s2g = torch.tensor(W_s2g, requires_grad=False)
+                model_teacher.module.W_s2g = model_teacher.module.W_s2g.float().to(device)
 
         # parallelize the model if using multiple gpus
         print('using #GPUs:',torch.cuda.device_count())
@@ -323,9 +332,9 @@ if __name__ == '__main__':
             help="coefficient of entropy minimization. If you try VAT + EM, set 0.06")
     parser.add_argument('--num_workers', default=12, type=int)
     parser.add_argument("--root", "-r", default="data", type=str, help="dataset dir for cifar and svhn")
-    parser.add_argument('--val_freq', default=5000, type=int,
+    parser.add_argument('--val_freq', default=10000, type=int,
             help='do val every x iter')
-    parser.add_argument('--print_freq', default=1000, type=int,
+    parser.add_argument('--print_freq', default=5000, type=int,
             help='show train loss/acc every x iter')
     parser.add_argument("--wd", default=1e-4, type=float, 
             help="weight decay")

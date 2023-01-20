@@ -2,15 +2,18 @@ alg=distill
 batch_size=64
 ## unused args
 warmup=1
+level=species
+data_root=/media/newhd/inaturalist_2019
+climit=100
 
 ## Self-Training ##
 for unlabel in in; do
-  for MoCo in true; do
+  for MoCo in false; do
     kd_T=1.0
     alpha=0.7
     # for task in semi_aves semi_fungi; do
-    for task in semi_fungi; do
-      for init in scratch imagenet; do
+    for task in semi_inat; do
+      for init in imagenet; do
 
         if [ ${init} == scratch ]
         then
@@ -24,7 +27,7 @@ for unlabel in in; do
           ## From ImageNet ##
           init=imagenet
           num_iter=50000
-          lr=1e-2
+          lr=3e-3
           wd=1e-4     
         elif [ ${init} == inat ]
         then
@@ -37,9 +40,9 @@ for unlabel in in; do
 
         if [ ${MoCo} == true ]
         then
-          exp_dir=${task}_${alg}_${init}_MoCo_${unlabel}_${lr}_${wd}_${num_iter}
+          exp_dir=${task}_${alg}_MoCo_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
         else
-          exp_dir=${task}_${alg}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+          exp_dir=${task}_${alg}_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
         fi
         echo "${exp_dir}"
         out_path=slurm_out/${exp_dir}
@@ -48,7 +51,7 @@ for unlabel in in; do
         # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_train.sbatch
         python run_train.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
                             --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
-                            --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T}
+                            --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --class_limit ${climit} --level ${level} --data_root ${data_root}
 
       done
     done

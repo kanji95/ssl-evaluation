@@ -8,13 +8,13 @@ alpha=1.0
 data_root=/media/newhd/inaturalist_2019/
 # only used for PL
 warmup=1
-climit=100
+climit=10
 
 ## Choose the algorithm
 # alg=sup_hie
 # alg=PL_hie
-alg=MoCo_hie
-# alg=ST_hie
+# alg=MoCo_hie
+alg=ST_hie
 # alg=MoCoST_hie
 # alg=transfer
 # level=species
@@ -43,7 +43,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=100000
+        num_iter=50000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -56,7 +56,7 @@ for level in species; do
       fi
 
       ## only species loss for labeled data
-      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
+      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -98,8 +98,8 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=100000
-        warmup=10000
+        num_iter=50000
+        warmup=5000
         # lr=1e-3
         lr=3e-3
         wd=1e-4
@@ -116,7 +116,7 @@ for level in species; do
         threshold=0.95
       fi
 
-      exp_dir=${task}_PL_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
+      exp_dir=${task}_PL_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -155,7 +155,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=100000
+        num_iter=50000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -167,7 +167,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_MoCo_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
+      exp_dir=${task}_MoCo_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -191,9 +191,8 @@ MoCo=false
 kd_T=1.0
 alpha=0.7
 warmup=1
-path_t=/home/kanishk/ssl-evaluation/results/semi_inat_Supervised_climit_100_species_imagenet_in_3e-3_1e-4_50000/checkpoints/checkpoint.pth.tar
+path_t=/home/kanishk/ssl-evaluation/results/semi_inat_Supervised_climit_10_species_imagenet_in_3e-3_1e-4_100000/checkpoints/checkpoint.pth.tar
 # unlabel=inout
-batch_size=64
 for level in species; do
   for unlabel in in; do
     for init in imagenet; do
@@ -209,7 +208,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=100000
+        num_iter=50000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -221,7 +220,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_ST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
+      exp_dir=${task}_ST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}
@@ -247,7 +246,7 @@ kd_T=1.0
 alpha=0.7
 warmup=1
 # unlabel=inout
-path_t=/home/kanishk/ssl-evaluation/results/semi_inat_MoCo_hie_climit_100_imagenet_in_3e-3_1e-4_50000/checkpoints/checkpoint.pth.tar
+path_t=/home/kanishk/ssl-evaluation/results/semi_inat_MoCo_hie_climit_10_imagenet_in_3e-3_1e-4_bs_60_50000/checkpoints/checkpoint.pth.tar
 for level in species; do
   for unlabel in in; do
     for init in imagenet; do
@@ -263,7 +262,7 @@ for level in species; do
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=100000
+        num_iter=50000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -275,7 +274,7 @@ for level in species; do
         wd=1e-4
       fi
 
-      exp_dir=${task}_MoCoST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}_noise_pret
+      exp_dir=${task}_MoCoST_hie_climit_${climit}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}

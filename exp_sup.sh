@@ -1,12 +1,12 @@
 alg=supervised
 batch_size=64
-level=genus
+level=species
 data_root=/media/newhd/inaturalist_2019
 ## unused args
 kd_T=1.0
 alpha=1.0
 warmup=1
-climit=25
+climit=100
 
 ## Supervised baseline 
 MoCo=false
@@ -38,8 +38,8 @@ for task in semi_inat; do
       wd=1e-4
     fi
 
-    # exp_dir=${task}_Supervised_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
-    exp_dir=${task}_Supervised_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+    exp_dir=${task}_Supervised_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
+    # exp_dir=${task}_Supervised_${level}_${init}_${unlabel}_${lr}_${wd}_${num_iter}
     echo "${exp_dir}"
     out_path=slurm_out_0504/${exp_dir}
     err_path=slurm_err_0504/${exp_dir}

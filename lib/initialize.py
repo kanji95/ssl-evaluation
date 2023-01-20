@@ -45,4 +45,5 @@ def initialize_model(model_name, num_classes, feature_extract=False,
     elif model_name == "custom_resnet18":
         model = models.resnet18(pretrained=True)
         model_ft = ResNet18(model, feature_size=600, num_classes=num_classes)
+        set_parameter_requires_grad(model_ft, feature_extract)
     return model_ft
