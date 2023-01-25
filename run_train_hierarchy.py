@@ -16,6 +16,7 @@ from lib.initialize_hierarchy import initialize_model
 from training_hierarchy import *
 from lib.datasets.iNatDataset_hierarchy import iNatDataset
 from lib.datasets.semi_iNatDataset_hierarchy import iNaturalist
+from lib.datasets.tieredImageNet_hierarchy import TieredImagenetH
 from lib.transform import train_transforms, val_transforms
 
 # dset_root = {}
@@ -82,8 +83,10 @@ def main(args):
     #     ])
     # }
     data_transforms = {
-        'train': train_transforms(args.input_size, "inaturalist19-224", augment=True, normalize=True),
-        'test': val_transforms("inaturalist19-224", normalize=True, resize=args.input_size)
+        # 'train': train_transforms(args.input_size, "inaturalist19-224", augment=True, normalize=True),
+        # 'test': val_transforms("inaturalist19-224", normalize=True, resize=args.input_size)
+        'train': train_transforms(args.input_size, "tiered-imagenet-224", augment=True, normalize=True),
+        'test': val_transforms("tiered-imagenet-224", normalize=True, resize=args.input_size)
     }
     data_transforms['l_train'] = data_transforms['train']
     data_transforms['u_train'] = data_transforms['train']
@@ -114,10 +117,14 @@ def main(args):
     
     class_limit = args.class_limit
     image_datasets = {
-        'l_train': iNaturalist(args.data_root, "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
-        'u_train': iNaturalist(args.data_root, "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
-        'val': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
-        'test': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
+        # 'l_train': iNaturalist(args.data_root, "train", transform=data_transforms['l_train'], taxonomy=args.level, class_limit=class_limit),
+        # 'u_train': iNaturalist(args.data_root, "train", transform=data_transforms['u_train'], taxonomy="genus", class_limit=class_limit),
+        # 'val': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
+        # 'test': iNaturalist(args.data_root, "val", transform=data_transforms['val'], taxonomy=args.level, class_limit=class_limit),
+        "l_train": TieredImagenetH(root=args.data_root, mode="train", transform=data_transforms['l_train'], is_parent=False),
+        "u_train": TieredImagenetH(root=args.data_root, mode="train", transform=data_transforms['u_train'], is_parent=False),
+        "val": TieredImagenetH(root=args.data_root, mode="val", transform=data_transforms['val'], is_parent=False),
+        "test": TieredImagenetH(root=args.data_root, mode="test", transform=data_transforms['test'], is_parent=False),
     }
 
     print("labeled data : {}, unlabeled data : {}".format(len(image_datasets['l_train']), len(image_datasets['u_train'])))
@@ -390,7 +397,7 @@ if __name__ == '__main__':
 
     ### Using hierarchy ###
     parser.add_argument('--level', default='species', type=str, 
-            choices=['kingdom','phylum','class','order','family','genus','species'], 
+            choices=['kingdom','phylum','class','order','family','genus','species', 'tiered'], 
             help='what level to use for supervision')
 
     args = parser.parse_args()

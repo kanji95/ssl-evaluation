@@ -390,7 +390,8 @@ if __name__ == '__main__':
                 args.load_dir = 'models/MoCo_init/' + args.task + '_' + args.init + '_' + args.unlabel + '.pth.tar'
         else:
             ## Using self-training
-            args.path_t = 'models/supervised/' + args.task + '_' + args.init + '.pth.tar'
+            if args.path_t == "":
+                args.path_t = 'models/supervised/' + args.task + '_' + args.init + '.pth.tar'
     elif args.MoCo:
         ## Using MoCo + supervised training
         if args.load_dir == "":

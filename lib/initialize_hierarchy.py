@@ -47,7 +47,7 @@ def initialize_model(model_name, num_classes, feature_extract=False,
         
         device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         
-        W_s2g = np.load('data/semi_inat/taxa_weights_2019.npy')
+        W_s2g = np.load('data/tiered/taxa_weights.npy')
         model_ft.W_s2g = torch.tensor(W_s2g, requires_grad=False)
         model_ft.W_s2g = model_ft.W_s2g.float().to(device)
 

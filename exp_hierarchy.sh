@@ -1,20 +1,21 @@
-task=semi_inat
+task=tiered
 batch_size=60
 level=species
 # only used for distillation
 kd_T=1.0
 alpha=1.0
 # data_root=/ssd_scratch/cvit/kanishk/inaturalist_2019/
-data_root=/media/newhd/inaturalist_2019/
+# data_root=/media/newhd/inaturalist_2019/
+data_root=/media/newhd/Imagenet2012/Imagenet-orig/
 # only used for PL
 warmup=1
 climit=10
 
 ## Choose the algorithm
-# alg=sup_hie
+alg=sup_hie
 # alg=PL_hie
 # alg=MoCo_hie
-alg=ST_hie
+# alg=ST_hie
 # alg=MoCoST_hie
 # alg=transfer
 # level=species
@@ -27,23 +28,23 @@ then
 alg=hierarchy
 MoCo=false
 # for level in genus kingdom phylum class order family species; do
-for level in species; do
+for level in tiered; do
   for unlabel in in; do
   # for unlabel in in inout; do
-    for init in imagenet; do
+    for init in scratch; do
 
       if [ ${init} == scratch ]
       then
         ## From scratch ##
         init=scratch
-        num_iter=100000
+        num_iter=200000
         lr=3e-3
         wd=1e-3
       elif [ ${init} == imagenet ]
       then
         ## From ImageNet ##
         init=imagenet
-        num_iter=50000
+        num_iter=200000
         lr=3e-3
         wd=1e-4
       elif [ ${init} == inat ]
@@ -56,7 +57,8 @@ for level in species; do
       fi
 
       ## only species loss for labeled data
-      exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      # exp_dir=${task}_Supervised_hie_climit_${climit}_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
+      exp_dir=${task}_Supervised_hie_full_${level}_${init}_${unlabel}_${lr}_${wd}_bs_${batch_size}_${num_iter}
       echo "${exp_dir}"
       out_path=slurm_out_bmvc/${exp_dir}
       err_path=slurm_err_bmvc/${exp_dir}

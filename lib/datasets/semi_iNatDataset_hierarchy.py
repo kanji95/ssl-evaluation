@@ -166,8 +166,9 @@ class iNaturalist(data.Dataset):
                 image_names = f.readlines()
             image_names = [image_name.strip() for image_name in image_names]
             
-            if mode == "train" and self.taxonomy_name == "species":
-                image_names = image_names[:class_limit]
+            # if mode == "train" and self.taxonomy_name == "species":
+            #     np.random.shuffle(image_names)
+            #     image_names = image_names[:class_limit]
             
             species_id = self.class_to_idx[class_name]
             # tax_id = self._taxonomy[self.taxonomy_name][species_id]

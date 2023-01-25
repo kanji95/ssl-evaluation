@@ -4,8 +4,9 @@ batch_size=64
 warmup=1
 level=species
 data_root=/media/newhd/inaturalist_2019
-climit=100
+climit=10
 
+path_t=/home/kanishk/ssl-evaluation/results/semi_inat_Supervised_climit_10_species_imagenet_in_3e-3_1e-4_100000/checkpoints/checkpoint.pth.tar
 ## Self-Training ##
 for unlabel in in; do
   for MoCo in false; do
@@ -50,7 +51,7 @@ for unlabel in in; do
         export task init alg batch_size lr wd num_iter exp_dir unlabel MoCo kd_T alpha warmup
         # sbatch --gres=gpu:1 -p 1080ti-long -o ${out_path}.out -e ${err_path}.err run_train.sbatch
         python run_train.py --task ${task} --init ${init} --alg ${alg} --unlabel ${unlabel} \
-                            --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} \
+                            --num_iter ${num_iter} --warmup ${warmup} --lr ${lr} --wd ${wd} --batch_size ${batch_size} --path_t ${path_t} \
                             --exp_dir ${exp_dir} --MoCo ${MoCo} --alpha ${alpha} --kd_T ${kd_T} --class_limit ${climit} --level ${level} --data_root ${data_root}
 
       done
